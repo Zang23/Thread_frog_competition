@@ -1,25 +1,27 @@
 package controller;
 
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class ThreadFrog extends Thread{
 
 	private int limitePulo;
 	private int idSapo;
 	private int totalPulado = 0;
-	private static AtomicInteger contadorColocacao = new AtomicInteger(0);
-	private int minhaColocacao = 0;
+	private double tempoChegada;
+	private boolean chegou = false;
+	private double[] resultado;
 	
-	public ThreadFrog(int limitePulo, int idSapo, int totalPulado) {
+	public ThreadFrog(int limitePulo, int idSapo, int totalPulado, double[] resultado) {
 		this.limitePulo = limitePulo;
 		this.idSapo = idSapo;
 		this.totalPulado = totalPulado;
+		this.resultado = resultado;
 	}
 	
 	
 	
 	public void run() {
 		int distanciaMaxima = 50;
+		
 		
 		while(totalPulado < distanciaMaxima) {
 			int tamanhoPulo = pulaSapo(limitePulo);
@@ -30,11 +32,9 @@ public class ThreadFrog extends Thread{
 			System.out.println(buffer);	
 		}
 		
-		if(totalPulado >= distanciaMaxima && minhaColocacao == 0) {
-			minhaColocacao = contadorColocacao.incrementAndGet();
-			System.out.println("Sapo " + idSapo + " Chegou em " + minhaColocacao + "° lugar" );
-		}
-		
+		tempoChegada = System.nanoTime();
+		resultado[idSapo - 1] = tempoChegada;
+		chegou = true;
 		
 	}
 	
@@ -42,9 +42,11 @@ public class ThreadFrog extends Thread{
 	private int pulaSapo(int limitePulo) {
 		int tamanhoPulo = (int) (Math.random()  * limitePulo+1);
 		return tamanhoPulo;
+
 	}
 	
-	
-	
+	public boolean isChegou() {
+		return chegou;
+	}
 	
 }
